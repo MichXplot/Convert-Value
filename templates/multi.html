@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convert A - Мульти-конверт</title>
+    <style>
+        * { box-sizing: border-box; }
+        :root { --blue: #0d6efd; --bg: #f4f5f7; --text: #000; }
+        body { font-family: Arial, Helvetica, sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--text); overflow-x: hidden; }
+        header { background: white; padding: 35px 80px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 5px rgba(0,0,0,0.05); height: 70px; }
+        .logo { font-size: 64px; font-weight: 400; font-style: normal; color: #000; margin: 0; }
+        nav { display: flex; gap: 60px; align-items: center; }
+        nav a { text-decoration: none; color: #333; font-weight: 400; font-size: 40px; }
+        nav a.active { color: var(--blue); font-weight: bold; }
+        .container { display: flex; justify-content: center; align-items: center; min-height: calc(100vh - 140px); padding: 20px; width: 100%;}
+        .card { background: white; padding: 50px 80px; border-radius: 15px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); width: 100%; max-width: 1300px; }
+        h2 { text-align: center; font-size: 72px; font-weight: 400; margin-top: 0; margin-bottom: 40px; letter-spacing: 5px; }
+        .grid { display: grid; grid-template-columns: 440px 180px 440px; justify-content: center; gap: 40px; align-items: start; margin-bottom: 40px; }
+        .input-box { display: flex; flex-direction: column; text-align: left; width: 100%; }
+        .box-title { font-size: 48px; font-weight: 700; line-height: 1.1; margin-bottom: 25px; height: 105px; display: flex; align-items: flex-end; }
+        input { width: 100%; padding: 18px 25px; border: 2px solid #999; border-radius: 6px; font-size: 40px; margin-bottom: 20px;}
+        input:focus { outline: none; border-color: var(--blue); }
+        .desktop-select { position: relative; width: 100%; font-size: 40px; }
+        .select-selected { display: flex; justify-content: space-between; align-items: center; background-color: #fff; border: 2px solid #999; padding: 18px 25px; border-radius: 6px; cursor: pointer; width: 100%; white-space: nowrap; }
+        .select-items { position: absolute; background-color: #fff; border: 1px solid #ccc; width: 100%; z-index: 99; top: 100%; left: 0; border-radius: 6px; max-height: 350px; overflow-y: auto; display: none; box-shadow: 0 10px 20px rgba(0,0,0,0.1);}
+        .select-items div { padding: 20px 25px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; white-space: nowrap; }
+        .select-items div:hover { background-color: #f1f1f1; }
+        .show { display: block; }
+        .btn { background: var(--blue); color: white; border: none; padding: 25px; width: 100%; border-radius: 12px; font-size: 46px; font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 5px;}
+        .swap-icon { display: flex; justify-content: center; align-items: center; margin-top: 130px; }
+        .swap-icon img { width: 110px; height: auto; object-fit: contain; }
+        .result-list { display: flex; flex-direction: column; gap: 15px; width: 100%; margin: 0; }
+        .result-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 25px; border: 2px solid #999; border-radius: 6px; font-size: 36px; background: #fff; font-weight: 400; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .flag-box { display: flex; align-items: center; gap: 15px; white-space: nowrap; }
+        .flag-icon { width: 46px; height: 30px; object-fit: cover; border: 1px solid #eee; flex-shrink: 0; }
+        .mobile-nav { display: none; }
+        @media (max-width: 768px) {
+            .container { padding: 15px; }
+            header { padding: 15px 20px; height: auto; justify-content: flex-start; }
+            header nav { display: none; }
+            .logo { font-size: 32px; margin: 0; font-weight: 400; font-style: normal; }
+            .card { width: 100%; padding: 25px 20px; margin-bottom: 90px; border-radius: 15px; }
+            h2 { font-size: 28px; letter-spacing: 1px; margin-bottom: 25px; }
+            .grid { display: grid; grid-template-columns: 1fr 35px 1fr; gap: 10px; align-items: start; margin-bottom: 30px; }
+            .input-box { width: 100%; }
+            .box-title { font-size: 18px; margin: 0 0 10px 0; height: 46px; line-height: 1.2; display: flex; align-items: flex-end; }
+            input, .desktop-select, .result-item { font-size: 16px; border: 2px solid #999; border-radius: 6px; margin-bottom: 12px; width: 100%; height: 44px; }
+            .btn { font-size: 26px; border-radius: 6px; margin-bottom: 12px; width: 100%; padding: 15px; height: auto; }
+            input { padding: 0 10px; }
+            .select-selected { padding: 0 8px; height: 100%; display: flex; align-items: center; justify-content: space-between; font-size: 16px; border: none; }
+            .select-items div { padding: 12px 8px; font-size: 16px;}
+            .result-list { gap: 12px; margin: 0; padding: 0; }
+            .result-item { padding: 0 8px; margin: 0; display: flex; justify-content: space-between; align-items: center; border: 2px solid #999; }
+            .flag-box { gap: 5px; font-size: 16px; display: flex; align-items: center; }
+            .flag-icon { width: 22px; height: 15px; }
+            .swap-icon { margin-top: 56px; display: flex; justify-content: center; align-items: center; height: 44px; }
+            .swap-icon img { width: 30px; height: 30px; }
+            .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; justify-content: space-around; align-items: center; padding: 10px 0; border-top: 1px solid #e4e6eb; z-index: 1000; height: 75px; }
+            .nav-icon { width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none; color: #000; flex-shrink: 0; background-color: transparent;}
+            .nav-icon.active { background-image: url('/static/bluecontainer.svg'); background-size: 100% 100%; background-position: center; background-repeat: no-repeat;}
+            .nav-icon img { width: 38px; height: 38px; flex-shrink: 0; display: block; object-fit: contain; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Convert A</div>
+        <nav>
+            <a href="/">Главная</a>
+            <a href="/multi" class="active">Мульти-конверт</a>
+            <a href="/history">История курсов</a>
+            <a href="/chart">Динамика курсов</a>
+        </nav>
+    </header>
+    <div class="container">
+        <form action="/multi" method="get" class="card">
+            <h2>Мульти-конвертер</h2>
+            <div class="grid">
+                <div class="input-box">
+                    <div class="box-title">Вход.<br>Сумма:</div>
+                    <input type="number" name="amt" value="{{ amt }}" required>
+                    <input type="hidden" name="base" id="base-cur" value="{{ base }}" required>
+                    <div class="desktop-select" id="base-drop-container">
+                        <div class="select-selected" onclick="toggleDropdown('base-drop')">
+                            <div class="flag-box" id="base-html">
+                                {{ base }} {{ curs[base][0] }} <img src="https://flagcdn.com/w40/{{ curs[base][1] }}.png" class="flag-icon">
+                            </div>
+                            <span>v</span>
+                        </div>
+                        <div class="select-items" id="base-drop">
+                            {% for c, d in curs.items() %}
+                            <div onclick="selectCur('base-cur', 'base-html', 'base-drop', '{{ c }}', '{{ c }} {{ d[0] }} <img src=\'https://flagcdn.com/w40/{{ d[1] }}.png\' class=\'flag-icon\'>')">
+                                <div class="flag-box">{{ c }} {{ d[0] }} <img src="https://flagcdn.com/w40/{{ d[1] }}.png" class="flag-icon"></div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="swap-icon">
+                    <img src="/static/arrow.svg" alt="Arrow">
+                </div>
+                <div class="input-box">
+                    <div class="box-title">Итоговый<br>список:</div>
+                    <div class="result-list">
+                        {% for i in lst %}
+                        <div class="result-item">
+                            <span>{{ i.code }} {{ i.val }}</span>
+                            <img src="https://flagcdn.com/w40/{{ i.flag }}.png" class="flag-icon" alt="{{ i.code }}">
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn">Конвертировать</button>
+        </form>
+    </div>
+    <div class="mobile-nav">
+        <a href="/" class="nav-icon"><img src="/static/main.svg" alt="Main"></a>
+        <a href="/multi" class="nav-icon active"><img src="/static/multi.svg" alt="Multi"></a>
+        <a href="/history" class="nav-icon"><img src="/static/historyvalue.svg" alt="Menu"></a>
+        <a href="/chart" class="nav-icon"><img src="/static/graphic.svg" alt="Chart"></a>
+    </div>
+    <script>
+        function toggleDropdown(id) { document.getElementById(id).classList.toggle("show"); }
+        function selectCur(inputId, htmlId, dropId, val, html) {
+            document.getElementById(inputId).value = val;
+            document.getElementById(htmlId).innerHTML = html;
+            document.getElementById(dropId).classList.remove("show");
+        }
+        window.onclick = function(e) {
+            if (!e.target.closest('.desktop-select')) {
+                let drops = document.getElementsByClassName("select-items");
+                for (let i = 0; i < drops.length; i++) {
+                    drops[i].classList.remove('show');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
