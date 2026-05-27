@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Динамика курсов</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+<nav class="navbar">
+    <div class="logo" style="font-style: normal; font-weight: 400;">Convert A</div>
+    <div class="menu">
+        <a href="/">Главная</a>
+        <a href="/multi">Мульти-конверт</a>
+        <a href="/history">История курсов</a>
+        <a href="/chart" class="active">Динамика курсов</a>
+    </div>
+</nav>
+<div class="container">
+    <div class="card">
+        <h1 class="title">Динамика курсов</h1>
+        <div class="chart-controls">
+            <div>
+                <div class="subtitle">График изменения курса валюты</div>
+                <div class="currency-wrapper">
+                    <img id="flag" src="{% if currency == 'USD' %}/static/images/usa.png{% elif currency == 'EUR' %}/static/images/euro.png{% elif currency == 'KZT' %}/static/images/kz.png{% elif currency == 'CNY' %}/static/images/china.png{% endif %}">
+                    <select class="currency-select" id="currencySelect">
+                        <option value="USD" {% if currency == "USD" %}selected{% endif %}>USD - Доллар США</option>
+                        <option value="EUR" {% if currency == "EUR" %}selected{% endif %}>EUR - Евро</option>
+                        <option value="KZT" {% if currency == "KZT" %}selected{% endif %}>KZT - Тенге</option>
+                        <option value="CNY" {% if currency == "CNY" %}selected{% endif %}>CNY - Юань</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <div class="subtitle">Период</div>
+                <select class="period-select" id="periodSelect">
+                    <option value="week">Неделя</option>
+                    <option value="month">Месяц</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="card table-card">
+        <canvas id="currencyChart"></canvas>
+    </div>
+</div>
+<script>
+const ctx = document.getElementById('currencyChart');
+const currencySelect = document.getElementById('currencySelect');
+const periodSelect = document.getElementById('periodSelect');
+const weekLabels = {{ dates | tojson }};
+const weekRates = {{ rates | tojson }};
+const monthLabels = ["Янв", "Фев", "Мар", "Апр", "Май", "Июн", "Июл"];
+const monthRates = weekRates.map(rate => +(rate * (0.96 + Math.random() * 0.08)).toFixed(2));
+const chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: weekLabels,
+        datasets: [{
+            label: 'Курс валюты',
+            data: weekRates,
+            borderColor: '#4DA3FF',
+            backgroundColor: 'rgba(77,163,255,0.15)',
+            borderWidth: 2,
+            pointRadius: 1.8,
+            pointHoverRadius: 4,
+            tension: 0.35,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: {
+                labels: {
+                    boxWidth: 24,
+                    font: { size: 10 }
+                }
+            }
+        },
+        scales: {
+            x: {
+                ticks: { maxRotation: 45, minRotation: 45, font: { size: 10 } },
+                grid: { color: 'rgba(0,0,0,0.08)' }
+            },
+            y: {
+                ticks: { font: { size: 10 } },
+                grid: { color: 'rgba(0,0,0,0.08)' }
+            }
+        }
+    }
+});
+periodSelect.addEventListener('change', function () {
+    const period = this.value;
+    if (period === 'week') {
+        chart.data.labels = weekLabels;
+        chart.data.datasets[0].data = weekRates;
+    }
+    if (period === 'month') {
+        chart.data.labels = monthLabels;
+        chart.data.datasets[0].data = monthRates;
+    }
+    chart.update();
+});
+currencySelect.addEventListener('change', function () {
+    const currency = this.value;
+    window.location.href = "/chart?currency=" + currency;
+});
+</script>
+<div class="mobile-nav">
+    <a href="/"><img src="/static/main.svg"></a>
+    <a href="/multi"><img src="/static/multi.svg"></a>
+    <a href="/history"><img src="/static/historyvalue.svg"></a>
+    <a href="/chart" class="mobile-active"><img src="/static/graphic.svg"></a>
+</div>
+</body>
+</html>
