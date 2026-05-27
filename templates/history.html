@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>История курсов</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+<div class="mobile-nav">
+    <a href="/"><img src="/static/main.svg"></a>
+    <a href="/multi"><img src="/static/multi.svg"></a>
+    <a href="/history" class="mobile-active"><img src="/static/historyvalue.svg"></a>
+    <a href="/chart"><img src="/static/graphic.svg"></a>
+</div>
+<nav class="navbar">
+    <div class="logo" style="font-style: normal; font-weight: 400;">Convert A</div>
+    <div class="menu">
+        <a href="/">Главная</a>
+        <a href="/multi">Мульти-конверт</a>
+        <a href="/history" class="active">История курсов</a>
+        <a href="/chart">Динамика курсов</a>
+    </div>
+</nav>
+<div class="container">
+    <div class="card">
+        <h1 class="title">История курсов</h1>
+        <div class="subtitle">История изменения курсов валют</div>
+        <br>
+        <div class="currency-wrapper">
+            <img id="flag" src="{% if currency == 'USD' %}/static/images/usa.png{% elif currency == 'EUR' %}/static/images/euro.png{% elif currency == 'KZT' %}/static/images/kz.png{% elif currency == 'CNY' %}/static/images/china.png{% endif %}">
+            <select class="currency-select" id="currencySelect">
+                <option value="USD" {% if currency == "USD" %}selected{% endif %}>USD - Доллар США</option>
+                <option value="EUR" {% if currency == "EUR" %}selected{% endif %}>EUR - Евро</option>
+                <option value="KZT" {% if currency == "KZT" %}selected{% endif %}>KZT - Тенге</option>
+                <option value="CNY" {% if currency == "CNY" %}selected{% endif %}>CNY - Юань</option>
+            </select>
+        </div>
+    </div>
+    <div class="card table-card">
+        <table>
+            <tr>
+                <th>Дата</th>
+                <th>Курс (RUB)</th>
+                <th>Изменение</th>
+            </tr>
+            {% for row in rates %}
+            <tr>
+                <td>{{ row[0] }}</td>
+                <td>{{ row[1] }}</td>
+                <td>
+                    {% if "+" in row[2] %}
+                        <span class="positive">{{ row[2] }}</span>
+                    {% else %}
+                        <span class="negative">{{ row[2] }}</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+<script>
+const currencySelect = document.getElementById('currencySelect');
+currencySelect.addEventListener('change', function () {
+    const currency = this.value;
+    window.location.href = "/history?currency=" + currency;
+});
+</script>
+</body>
+</html>

@@ -11,11 +11,11 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 curs = {
-    "RUB": ["₽", "ru"],
+    "RUB": ["в‚Ѕ", "ru"],
     "USD": ["$", "us"],
-    "EUR": ["€", "eu"],
-    "CNY": ["¥", "cn"],
-    "KZT": ["₸", "kz"]
+    "EUR": ["в‚¬", "eu"],
+    "CNY": ["ВҐ", "cn"],
+    "KZT": ["в‚ё", "kz"]
 }
 
 def get_rate(cur):
@@ -62,6 +62,55 @@ async def multi(request: Request, amt: float = 1000.0, base: str = "RUB"):
         lst.append({"code": t, "val": v, "flag": curs[t][1]})
     return templates.TemplateResponse(request=request, name="multi.html", context={
         "amt": amt, "base": base, "lst": lst, "curs": curs
+    })
+
+@app.get("/history", response_class=HTMLResponse)
+async def history(request: Request, currency: str = "USD"):
+    rates = []
+    for name in ["currencies.db", "currency.db"]:
+        try:
+            db = sqlite3.connect(name)
+            c = db.cursor()
+            c.execute("SELECT date, rate, change_value FROM rates WHERE currency=?", (currency,))
+            rates = c.fetchall()
+            db.close()
+            if rates:
+                break
+        except:
+            pass
+    if not rates:
+        rates = [
+            ["25.05.2026", "95.20", "+0.20"],
+            ["24.05.2026", "95.00", "-0.15"],
+            ["23.05.2026", "95.15", "+0.05"]
+        ]
+    return templates.TemplateResponse(request=request, name="history.html", context={
+        "rates": rates, "currency": currency
+    })
+
+@app.get("/chart", response_class=HTMLResponse)
+async def chart(request: Request, currency: str = "USD"):
+    rows = []
+    for name in ["currencies.db", "currency.db"]:
+        try:
+            db = sqlite3.connect(name)
+            c = db.cursor()
+            c.execute("SELECT date, rate FROM rates WHERE currency=?", (currency,))
+            rows = c.fetchall()
+            db.close()
+            if rows:
+                break
+        except:
+            pass
+    if not rows:
+        rows = [
+            ["19.05", 94.5], ["20.05", 94.8], ["21.05", 95.0],
+            ["22.05", 94.9], ["23.05", 95.15], ["24.05", 95.0], ["25.05", 95.2]
+        ]
+    dates = [r[0] for r in rows]
+    rates = [r[1] for r in rows]
+    return templates.TemplateResponse(request=request, name="chart.html", context={
+        "dates": dates, "rates": rates, "currency": currency
     })
 
 if __name__ == "__main__":
