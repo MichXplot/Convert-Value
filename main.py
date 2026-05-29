@@ -11,11 +11,11 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 curs = {
-    "RUB": ["в‚Ѕ", "ru"],
+    "RUB": ["₽", "ru"],
     "USD": ["$", "us"],
-    "EUR": ["в‚¬", "eu"],
-    "CNY": ["ВҐ", "cn"],
-    "KZT": ["в‚ё", "kz"]
+    "EUR": ["€", "eu"],
+    "CNY": ["¥", "cn"],
+    "KZT": ["₸", "kz"]
 }
 
 def get_rate(cur):
