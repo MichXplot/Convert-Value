@@ -42,7 +42,7 @@ def get_rate(cur):
         "GBP": 125.0,
         "JPY": 0.65,
         "AED": 26.0,
-        "BYN": 29.0
+        "BYN": 0.0345
     }
     return fb.get(cur, 1.0)
 
