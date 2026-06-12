@@ -33,7 +33,17 @@ def get_rate(cur):
             return res[0]
     except:
         pass
-    fb = {"USD": 95.0, "EUR": 105.0, "CNY": 13.0, "KZT": 0.2, "RUB": 1.0}
+    fb = {
+        "RUB": 1.0,
+        "USD": 95.0,
+        "EUR": 105.0,
+        "CNY": 13.0,
+        "KZT": 0.2,
+        "GBP": 125.0,
+        "JPY": 0.65,
+        "AED": 26.0,
+        "BYN": 29.0
+    }
     return fb.get(cur, 1.0)
 
 @app.get("/", response_class=HTMLResponse)
