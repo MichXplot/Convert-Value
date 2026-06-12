@@ -62,14 +62,16 @@ async def convert(request: Request, amt: float = Form(...), base: str = Form(...
         "amt": amt, "base": base, "target": target, "res": res, "curs": curs
     })
 
+
 @app.get("/multi", response_class=HTMLResponse)
 async def multi(request: Request, amt: float = 1000.0, base: str = "RUB"):
-    targs = ["USD", "EUR", "CNY", "KZT", "RUB"]
+    targs = ["USD", "EUR", "CNY", "KZT", "GBP", "JPY", "AED", "BYN", "RUB"]
+
     if base in targs:
         targs.remove(base)
     r1 = get_rate(base) if base != "RUB" else 1.0
     lst = []
-    for t in targs[:4]:
+    for t in targs[:8]:
         r2 = get_rate(t) if t != "RUB" else 1.0
         rub = amt / r1
         v = round(rub * r2, 2)
@@ -125,6 +127,59 @@ async def chart(request: Request, currency: str = "USD"):
     rates = [r[1] for r in rows]
     return templates.TemplateResponse(request=request, name="chart.html", context={
         "dates": dates, "rates": rates, "currency": currency
+    })
+
+
+# 1. Отображение страницы покупки с передачей словаря курсов (GET)
+@app.get("/buy", response_class=HTMLResponse)
+async def buy_page(request: Request, amt: float = 1000.0, base: str = "RUB"):
+    # Собираем все курсы относительно рубля для JS-калькулятора
+    all_rates = {c: get_rate(c) if c != "RUB" else 1.0 for c in curs}
+    return templates.TemplateResponse(request=request, name="buy.html", context={
+        "request": request, "amt": amt, "base": base, "curs": curs, "rates": all_rates, "success": False
+    })
+
+
+
+@app.post("/buy/confirm", response_class=HTMLResponse)
+async def buy_confirm(
+        request: Request,
+        user_name: str = Form(...),
+        user_phone: str = Form(...),
+        amt: float = Form(...),
+        base: str = Form(...),
+        target: str = Form(...)
+):
+    r1 = get_rate(base) if base != "RUB" else 1.0
+    r2 = get_rate(target) if target != "RUB" else 1.0
+    rub = amt / r1
+    res = round(rub * r2, 2)
+
+    try:
+        db = sqlite3.connect('orders.db')
+        c = db.cursor()
+        c.execute("""
+            INSERT INTO purchases (base_currency, target_currency, amount, result_amount, user_name, user_phone, status)
+            VALUES (?, ?, ?, ?, ?, ?, 'Новая')
+        """, (base, target, amt, res, user_name, user_phone))
+        db.commit()
+        db.close()
+        success = True
+    except Exception as e:
+        print(f"Ошибка записи в БД заказов: {e}")
+        success = False
+
+    all_rates = {c: get_rate(c) if c != "RUB" else 1.0 for c in curs}
+    return templates.TemplateResponse(request=request, name="buy.html", context={
+        "request": request,
+        "success": success,
+        "user_name": user_name,
+        "amt": amt,
+        "base": base,
+        "target": target,
+        "res": res,
+        "curs": curs,
+        "rates": all_rates
     })
 
 if __name__ == "__main__":

@@ -6,7 +6,7 @@
     <title>Convert A - Мульти-конверт</title>
     <style>
         * { box-sizing: border-box; }
-        :root { --blue: #0d6efd; --bg: #f4f5f7; --text: #000; }
+        :root { --blue: #0d6efd; --bg: #f4f5f7; --text: #000; --green: #22c55e; }
         body { font-family: Arial, Helvetica, sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--text); overflow-x: hidden; }
         header { background: white; padding: 35px 80px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 5px rgba(0,0,0,0.05); height: 70px; }
         .logo { font-size: 64px; font-weight: 400; font-style: normal; color: #000; margin: 0; }
@@ -16,25 +16,42 @@
         .container { display: flex; justify-content: center; align-items: center; min-height: calc(100vh - 140px); padding: 20px; width: 100%;}
         .card { background: white; padding: 50px 80px; border-radius: 15px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); width: 100%; max-width: 1300px; }
         h2 { text-align: center; font-size: 72px; font-weight: 400; margin-top: 0; margin-bottom: 40px; letter-spacing: 5px; }
+        
+        /* Сетка десктопа */
         .grid { display: grid; grid-template-columns: 440px 180px 440px; justify-content: center; gap: 40px; align-items: start; margin-bottom: 40px; }
         .input-box { display: flex; flex-direction: column; text-align: left; width: 100%; }
         .box-title { font-size: 48px; font-weight: 700; line-height: 1.1; margin-bottom: 25px; height: 105px; display: flex; align-items: flex-end; }
+        .right-text-shift { padding-left: 40px; }
+
+        /* Элементы десктопа */
         input { width: 100%; padding: 18px 25px; border: 2px solid #999; border-radius: 6px; font-size: 40px; margin-bottom: 20px;}
         input:focus { outline: none; border-color: var(--blue); }
-        .desktop-select { position: relative; width: 100%; font-size: 40px; }
+        .desktop-select { position: relative; width: 100%; font-size: 40px; margin-bottom: 20px; }
         .select-selected { display: flex; justify-content: space-between; align-items: center; background-color: #fff; border: 2px solid #999; padding: 18px 25px; border-radius: 6px; cursor: pointer; width: 100%; white-space: nowrap; }
         .select-items { position: absolute; background-color: #fff; border: 1px solid #ccc; width: 100%; z-index: 99; top: 100%; left: 0; border-radius: 6px; max-height: 350px; overflow-y: auto; display: none; box-shadow: 0 10px 20px rgba(0,0,0,0.1);}
         .select-items div { padding: 20px 25px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; white-space: nowrap; }
         .select-items div:hover { background-color: #f1f1f1; }
         .show { display: block; }
-        .btn { background: var(--blue); color: white; border: none; padding: 25px; width: 100%; border-radius: 12px; font-size: 46px; font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 5px;}
-        .swap-icon { display: flex; justify-content: center; align-items: center; margin-top: 130px; }
+        
+        /* КНОПКА ПРИОБРЕСТИ НА ПК */
+        .acquire-btn { display: flex; justify-content: center; align-items: center; width: 100%; background: transparent; color: var(--text); border: 2px solid var(--green); padding: 18px 25px; border-radius: 6px; font-size: 40px; font-weight: 700; text-align: center; text-decoration: none; transition: 0.2s; margin-top: 0; margin-bottom: 0; letter-spacing: 3px; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.1); height: 82px; }
+        .acquire-btn:hover { background: #f0fdf4; }
+
+        /* СТРЕЛКА НА ПК: Выровнена строго по нижней линии текста заголовков */
+        .swap-icon { display: flex; justify-content: center; align-items: flex-end; height: 105px; padding-bottom: 10px; margin-top: 0; }
         .swap-icon img { width: 110px; height: auto; object-fit: contain; }
-        .result-list { display: flex; flex-direction: column; gap: 15px; width: 100%; margin: 0; }
-        .result-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 25px; border: 2px solid #999; border-radius: 6px; font-size: 36px; background: #fff; font-weight: 400; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        /* ФИКС ДЕСКТОПА: Возвращаем скролл-бокс, чтобы карточка не была огромной */
+        .result-list { display: flex; flex-direction: column; gap: 15px; width: 100%; margin: 0; max-height: 285px; overflow-y: auto; padding-right: 5px; }
+        .result-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 25px; border: 2px solid #999; border-radius: 6px; font-size: 36px; background: #fff; font-weight: 400; width: 100%; white-space: nowrap; }
+        
         .flag-box { display: flex; align-items: center; gap: 15px; white-space: nowrap; }
         .flag-icon { width: 46px; height: 30px; object-fit: cover; border: 1px solid #eee; flex-shrink: 0; }
+        .btn { background: var(--blue); color: white; border: none; padding: 25px; width: 100%; border-radius: 12px; font-size: 46px; font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 5px;}
+        .btn:hover { background: #0b5ed7; }
         .mobile-nav { display: none; }
+        
+        /* РОДНАЯ МОБИЛЬНАЯ ГЕОМЕТРИЯ С ПОЛНЫМ НАБОРОМ ФИКСОВ */
         @media (max-width: 768px) {
             .container { padding: 15px; }
             header { padding: 15px 20px; height: auto; justify-content: flex-start; }
@@ -42,20 +59,37 @@
             .logo { font-size: 32px; margin: 0; font-weight: 400; font-style: normal; }
             .card { width: 100%; padding: 25px 20px; margin-bottom: 90px; border-radius: 15px; }
             h2 { font-size: 28px; letter-spacing: 1px; margin-bottom: 25px; }
+            
+            /* Родная горизонтальная сетка мобилки */
             .grid { display: grid; grid-template-columns: 1fr 35px 1fr; gap: 10px; align-items: start; margin-bottom: 30px; }
             .input-box { width: 100%; }
             .box-title { font-size: 18px; margin: 0 0 10px 0; height: 46px; line-height: 1.2; display: flex; align-items: flex-end; }
+            
+            /* ФИКС НАДПИСИ НА ТЕЛЕФОНЕ: Сдвигаем вправо параллельно левой, как ты просил */
+            .right-text-shift { padding-left: 15px; }
+            
+            /* Высота мобильных полей (44px) и зазоры по 12px */
             input, .desktop-select, .result-item { font-size: 16px; border: 2px solid #999; border-radius: 6px; margin-bottom: 12px; width: 100%; height: 44px; }
             .btn { font-size: 26px; border-radius: 6px; margin-bottom: 12px; width: 100%; padding: 15px; height: auto; }
             input { padding: 0 10px; }
-            .select-selected { padding: 0 8px; height: 100%; display: flex; align-items: center; justify-content: space-between; font-size: 16px; border: none; }
-            .select-items div { padding: 12px 8px; font-size: 16px;}
-            .result-list { gap: 12px; margin: 0; padding: 0; }
+            
+            .select-selected { padding: 0 8px; height: 100%; display: flex; align-items: center; justify-content: space-between; font-size: 16px; border: none; margin-bottom: 0; }
+            .select-items div { padding: 12px 8px; font-size: 16px; }
+            
+            /* На мобилке разворачиваем список во всю длину */
+            .result-list { gap: 12px; margin: 0; padding: 0; max-height: none; overflow: visible; }
             .result-item { padding: 0 8px; margin: 0; display: flex; justify-content: space-between; align-items: center; border: 2px solid #999; }
+            
+            /* ФИКС МОБИЛЬНОЙ КНОПКИ: Шрифт 15px, текст сидит свободно, зазоры идеальные */
+            .acquire-btn { font-size: 15px; padding: 0; border: 2px solid var(--green); margin-top: 0; margin-bottom: 12px; height: 44px; display: flex; align-items: center; justify-content: center; color: var(--text); letter-spacing: 0; box-shadow: none; font-weight: 700; border-radius: 6px; background: transparent; text-decoration: none; width: 100%; }
+            
             .flag-box { gap: 5px; font-size: 16px; display: flex; align-items: center; }
             .flag-icon { width: 22px; height: 15px; }
-            .swap-icon { margin-top: 56px; display: flex; justify-content: center; align-items: center; height: 44px; }
+            
+            /* ФИКС СТРЕЛКИ НА МОБИЛКЕ: Выровнена по нижней линии текста заголовков */
+            .swap-icon { margin-top: 0; display: flex; justify-content: center; align-items: flex-end; height: 46px; padding-bottom: 4px; }
             .swap-icon img { width: 30px; height: 30px; }
+            
             .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; justify-content: space-around; align-items: center; padding: 10px 0; border-top: 1px solid #e4e6eb; z-index: 1000; height: 75px; }
             .nav-icon { width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none; color: #000; flex-shrink: 0; background-color: transparent;}
             .nav-icon.active { background-image: url('/static/bluecontainer.svg'); background-size: 100% 100%; background-position: center; background-repeat: no-repeat;}
@@ -96,12 +130,18 @@
                             {% endfor %}
                         </div>
                     </div>
+                    
+                    <a href="/buy?amt={{amt}}&base={{base}}" class="acquire-btn">Приобрести</a>
                 </div>
+                
                 <div class="swap-icon">
                     <img src="/static/arrow.svg" alt="Arrow">
                 </div>
+                
                 <div class="input-box">
-                    <div class="box-title">Итоговый<br>список:</div>
+                    <div class="right-text-shift">
+                        <div class="box-title">Итоговый<br>список:</div>
+                    </div>
                     <div class="result-list">
                         {% for i in lst %}
                         <div class="result-item">
