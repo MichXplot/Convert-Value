@@ -29,12 +29,25 @@
         <div class="subtitle">История изменения курсов валют</div>
         <br>
         <div class="currency-wrapper">
-            <img id="flag" src="{% if currency == 'USD' %}/static/images/usa.png{% elif currency == 'EUR' %}/static/images/euro.png{% elif currency == 'KZT' %}/static/images/kz.png{% elif currency == 'CNY' %}/static/images/china.png{% endif %}">
+            <img id="flag" src="
+{% if currency == 'USD' %}/static/images/usa.png
+{% elif currency == 'EUR' %}/static/images/euro.png
+{% elif currency == 'KZT' %}/static/images/kz.png
+{% elif currency == 'CNY' %}/static/images/china.png
+{% elif currency == 'GBP' %}https://flagcdn.com/w40/gb.png
+{% elif currency == 'JPY' %}https://flagcdn.com/w40/jp.png
+{% elif currency == 'AED' %}https://flagcdn.com/w40/ae.png
+{% elif currency == 'BYN' %}https://flagcdn.com/w40/by.png
+{% endif %}">
             <select class="currency-select" id="currencySelect">
                 <option value="USD" {% if currency == "USD" %}selected{% endif %}>USD - Доллар США</option>
                 <option value="EUR" {% if currency == "EUR" %}selected{% endif %}>EUR - Евро</option>
                 <option value="KZT" {% if currency == "KZT" %}selected{% endif %}>KZT - Тенге</option>
                 <option value="CNY" {% if currency == "CNY" %}selected{% endif %}>CNY - Юань</option>
+                <option value="GBP" {% if currency == "GBP" %}selected{% endif %}>GBP - Британский фунт</option>
+                <option value="JPY" {% if currency == "JPY" %}selected{% endif %}>JPY - Японская иена</option>
+                <option value="AED" {% if currency == "AED" %}selected{% endif %}>AED - Дирхам ОАЭ</option>
+                <option value="BYN" {% if currency == "BYN" %}selected{% endif %}>BYN - Белорусский рубль</option>
             </select>
         </div>
     </div>
