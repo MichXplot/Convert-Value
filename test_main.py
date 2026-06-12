@@ -39,5 +39,41 @@ class TestMyFeatures(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("text/html", response.headers["content-type"])
 
+    def test_history_page(self):
+        response = self.client.get("/history?currency=USD")
+        self.assertEqual(response.status_code, 200)
+
+    def test_chart_page(self):
+        response = self.client.get("/chart?currency=USD")
+        self.assertEqual(response.status_code, 200)
+
+    def test_convert_gbp(self):
+        response = self.client.post(
+            "/convert",
+            data={"amt": 1000, "base": "RUB", "target": "GBP"}
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_convert_jpy(self):
+        response = self.client.post(
+            "/convert",
+            data={"amt": 1000, "base": "RUB", "target": "JPY"}
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_convert_aed(self):
+        response = self.client.post(
+            "/convert",
+            data={"amt": 1000, "base": "RUB", "target": "AED"}
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_convert_byn(self):
+        response = self.client.post(
+            "/convert",
+            data={"amt": 1000, "base": "RUB", "target": "BYN"}
+        )
+        self.assertEqual(response.status_code, 200)
+
 if __name__ == "__main__":
     unittest.main()
